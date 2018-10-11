@@ -1,0 +1,72 @@
+iso-Octane
+C8H18
+Enthalpy = -249.95
+Entropy = 361.2
+Density = 0.703
+
+Ethanol
+C2H6O
+Enthalpy = -277.38
+Entropy = 159.9
+Density = 0.789
+
+Methanol
+CH4O
+Enthalpy = -238.4
+Entropy = 127.2
+Density = 0.792
+
+n-Heptane
+C7H16
+Enthalpy = -224.5
+Entropy = 328.57
+Density = 0.6795
+
+Ethylbenzene
+C8H10
+Enthalpy = 12.5
+Entropy = 255
+Density = 0.8665
+
+Toluene
+C7H8
+Enthalpy = 12
+Entropy = 220.96
+Density = 0.87
+
+Xylenes
+C8H10
+Enthalpy = -25
+Entropy = 250
+Density = 0.864
+
+Isopropyl Alcohol
+C3H8O
+Enthalpy = -318.2
+Entropy = 180
+Density = 0.786
+
+Hydrogen
+H2
+Enthalpy = 2.016
+Entropy = 130.68
+Density = 0.08988
+
+Acetone
+C3H6O
+Enthalpy = -250.03
+Entropy = 200.4
+Density = 0.7845
+
+Ethylene Glycol
+C2H6O2
+Enthalpy = -460
+Entropy = 166.9
+Density = 1.1132
+
+1-Propanol
+C3H8O
+Enthalpy = -302.5
+Entropy = 192.8
+Density = 0.803
+

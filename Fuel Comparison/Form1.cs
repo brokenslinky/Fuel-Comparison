@@ -25,6 +25,17 @@ namespace Fuel_Comparison
             {
                 return 12.0107 * carbon + 1.00794 * hydrogen + 15.999 * oxygen;
             }
+            public string chemical_formula()
+            {
+                string formula = string.Empty;
+                if (carbon != 0)
+                    formula += "C" + carbon.ToString();
+                if (hydrogen != 0)
+                    formula += "H" + hydrogen.ToString();
+                if (oxygen != 0)
+                    formula += "O" + oxygen.ToString();
+                return formula;
+            }
         }
 
         #region gas properties
@@ -135,7 +146,7 @@ namespace Fuel_Comparison
 
         public string[] get_fuel_list()
         {
-            StreamReader reader = new StreamReader(System.Environment.CurrentDirectory + @"\Fuel Library.txt");
+            StreamReader reader = new StreamReader(System.Environment.CurrentDirectory + @"\..\..\Fuel Library.txt");
             List<string> name_list = new List<string>();
             bool name_line = true;
             string line = string.Empty;
@@ -156,10 +167,23 @@ namespace Fuel_Comparison
             return fuel_names;
         }
 
+        public Form1()
+        {
+            InitializeComponent();
+            intake_text_box.Text = "300";
+            exhaust_text_box.Text = "1000";
+            fuel1_dropdown.Items.AddRange(get_fuel_list());
+            fuel1_dropdown.SelectedIndex = 0;
+            populate_text_boxes(get_fuel_properties(fuel1_dropdown.SelectedItem.ToString()), 1);
+            fuel2_dropdown.Items.AddRange(get_fuel_list());
+            fuel2_dropdown.SelectedIndex = 1;
+            populate_text_boxes(get_fuel_properties(fuel2_dropdown.SelectedItem.ToString()), 2);
+        }
+
         public Molecule get_fuel_properties(string fuel_name)
         {
             Molecule fuel = new Molecule();
-            StreamReader reader = new StreamReader(System.Environment.CurrentDirectory + @"\Fuel Library.txt");
+            StreamReader reader = new StreamReader(System.Environment.CurrentDirectory + @"\..\..\Fuel Library.txt");
             string line = string.Empty;
             string property = string.Empty;
             while ((line = reader.ReadLine()) != fuel_name)
@@ -315,19 +339,6 @@ namespace Fuel_Comparison
             }
         }
 
-        public Form1()
-        {
-            InitializeComponent();
-            intake_text_box.Text = "300";
-            exhaust_text_box.Text = "1000";
-            fuel1_dropdown.Items.AddRange(get_fuel_list());
-            fuel1_dropdown.SelectedIndex = 0;
-            populate_text_boxes(get_fuel_properties(fuel1_dropdown.SelectedItem.ToString()), 1);
-            fuel2_dropdown.Items.AddRange(get_fuel_list());
-            fuel2_dropdown.SelectedIndex = 1;
-            populate_text_boxes(get_fuel_properties(fuel2_dropdown.SelectedItem.ToString()), 2);
-        }
-
         private void fuel1_dropdown_SelectedIndexChanged(object sender, EventArgs e)
         {
             populate_text_boxes(get_fuel_properties(fuel1_dropdown.SelectedItem.ToString()), 1);
@@ -364,22 +375,14 @@ namespace Fuel_Comparison
             Reaction rich_reaction2 = rich_combustion(fuel2);
             #endregion
             #region display each reaction
-            lean_reaction1_text_box.Text = lean_reaction1.fuel_in.ToString() + "C" + fuel1.carbon.ToString() + 
-                "H" + fuel1.hydrogen.ToString() + "O" + fuel1.oxygen.ToString() + " + " + 
-                lean_reaction1.O2_in.ToString() + "O2 -> " + lean_reaction1.H2O_out.ToString() + "H2O + " + 
-                lean_reaction1.CO2_out.ToString() + "CO2";
-            lean_reaction2_text_box.Text = lean_reaction2.fuel_in.ToString() + "C" + fuel2.carbon.ToString() + 
-                "H" + fuel2.hydrogen.ToString() + "O" + fuel2.oxygen.ToString() + " + " + 
-                lean_reaction2.O2_in.ToString() + "O2 -> " + lean_reaction2.H2O_out.ToString() + "H2O + " + 
-                lean_reaction2.CO2_out.ToString() + "CO2";
-            rich_reaction1_text_box.Text = rich_reaction1.fuel_in.ToString() + "C" + fuel1.carbon.ToString() + 
-                "H" + fuel1.hydrogen.ToString() + "O" + fuel1.oxygen.ToString() + " + " + 
-                rich_reaction1.O2_in.ToString() + "O2 -> " + rich_reaction1.H2O_out.ToString() + "H2O + " + 
-                rich_reaction1.CO_out.ToString() + "CO";
-            rich_reaction2_text_box.Text = rich_reaction2.fuel_in.ToString() + "C" + fuel2.carbon.ToString() + 
-                "H" + fuel2.hydrogen.ToString() + "O" + fuel2.oxygen.ToString() + " + " + 
-                rich_reaction2.O2_in.ToString() + "O2 -> " + rich_reaction2.H2O_out.ToString() + "H2O + " + 
-                rich_reaction2.CO_out.ToString() + "CO";
+            lean_reaction1_text_box.Text = lean_reaction1.fuel_in.ToString() + fuel1.chemical_formula() + " + " + lean_reaction1.O2_in.ToString() + "O2 -> " + 
+                lean_reaction1.H2O_out.ToString() + "H2O + " + lean_reaction1.CO2_out.ToString() + "CO2";
+            lean_reaction2_text_box.Text = lean_reaction2.fuel_in.ToString() + fuel2.chemical_formula() + " + " + lean_reaction2.O2_in.ToString() + "O2 -> " + 
+                lean_reaction2.H2O_out.ToString() + "H2O + " + lean_reaction2.CO2_out.ToString() + "CO2";
+            rich_reaction1_text_box.Text = rich_reaction1.fuel_in.ToString() + fuel1.chemical_formula() + " + " + rich_reaction1.O2_in.ToString() + "O2 -> " + 
+                rich_reaction1.H2O_out.ToString() + "H2O + " + rich_reaction1.CO_out.ToString() + "CO";
+            rich_reaction2_text_box.Text = rich_reaction2.fuel_in.ToString() + fuel2.chemical_formula() + " + " + rich_reaction2.O2_in.ToString() + "O2 -> " + 
+                rich_reaction2.H2O_out.ToString() + "H2O + " + rich_reaction2.CO_out.ToString() + "CO";
             #endregion
             #region display air:fuel ratios for each reaction
             lean_AFR_text_box1.Text = lean_reaction1.air_fuel_ratio.ToString("N1") + ":1";
