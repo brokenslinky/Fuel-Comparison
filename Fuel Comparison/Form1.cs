@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace Fuel_Comparison
 {
@@ -19,12 +20,25 @@ namespace Fuel_Comparison
             public int oxygen = 0;
             public double enthalpy;
             public double entropy;
+            public double density;
             public double molar_mass()
             {
                 return 12.0107 * carbon + 1.00794 * hydrogen + 15.999 * oxygen;
             }
+            public string chemical_formula()
+            {
+                string formula = string.Empty;
+                if (carbon != 0)
+                    formula += "C" + carbon.ToString();
+                if (hydrogen != 0)
+                    formula += "H" + hydrogen.ToString();
+                if (oxygen != 0)
+                    formula += "O" + oxygen.ToString();
+                return formula;
+            }
         }
 
+        #region gas properties
         Molecule O2 = new Molecule
         {
             oxygen = 2,
@@ -46,7 +60,9 @@ namespace Fuel_Comparison
             enthalpy = -393.509,
             entropy = 213.74
         };
+
         double air_molar_mass = 28.97;
+        #endregion
 
         public class Reaction
         {
@@ -82,7 +98,7 @@ namespace Fuel_Comparison
             reaction.energy_per_fuel = (energy / reaction.fuel_in) * (Convert.ToDouble(density_text_box.Text) / 
                 fuel.molar_mass());
             reaction.energy_per_O2 = energy / reaction.O2_in;
-            reaction.air_fuel_ratio = (reaction.O2_in / reaction.fuel_in) * (air_molar_mass / fuel.molar_mass()) /
+            reaction.air_fuel_ratio = (Convert.ToDouble(reaction.O2_in) / Convert.ToDouble(reaction.fuel_in)) * (air_molar_mass / fuel.molar_mass()) /
                 0.2095;
             while (reaction.O2_in % 2 == 0 && reaction.H2O_out % 2 == 0 && reaction.CO_out % 2 == 0)
             {
@@ -116,7 +132,7 @@ namespace Fuel_Comparison
             reaction.energy_per_fuel = (energy / reaction.fuel_in) * (Convert.ToDouble(density_text_box.Text) / 
                 fuel.molar_mass());
             reaction.energy_per_O2 = energy / reaction.O2_in;
-            reaction.air_fuel_ratio = (reaction.O2_in / reaction.fuel_in) * (air_molar_mass / fuel.molar_mass()) / 
+            reaction.air_fuel_ratio = (Convert.ToDouble(reaction.O2_in) / Convert.ToDouble(reaction.fuel_in)) * (air_molar_mass / fuel.molar_mass()) / 
                 0.2095;
             while (reaction.O2_in % 2 == 0 && reaction.H2O_out % 2 == 0 && reaction.CO2_out % 2 == 0)
             {
@@ -128,23 +144,209 @@ namespace Fuel_Comparison
             return reaction;
         }
 
+        public string[] get_fuel_list()
+        {
+            StreamReader reader = new StreamReader(System.Environment.CurrentDirectory + @"\..\..\Fuel Library.txt");
+            List<string> name_list = new List<string>();
+            bool name_line = true;
+            string line = string.Empty;
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (name_line && line != string.Empty)
+                {
+                    name_list.Add(line);
+                    name_line = false;
+                }
+                if (line == string.Empty)
+                    name_line = true;
+            }
+            reader.Close();
+            string[] fuel_names = new string[name_list.Count];
+            for (int index = 0; index < name_list.Count; index++)
+                fuel_names[index] = name_list[index];
+            return fuel_names;
+        }
+
         public Form1()
         {
             InitializeComponent();
-            carbon_text_box.Text = "8";
-            hydrogen_text_box.Text = "18";
-            oxygen_text_box.Text = "0";
-            enthaply_text_box.Text = "-249.95";
-            entropy_text_box.Text = "361.2";
-            density_text_box.Text = "0.703";
-            carbon2_text_box.Text = "2";
-            hydrogen2_text_box.Text = "6";
-            oxygen2_text_box.Text = "1";
-            enthalpy2_text_box.Text = "-277.38";
-            entropy2_text_box.Text = "159.9";
-            density2_text_box.Text = "0.788";
             intake_text_box.Text = "300";
             exhaust_text_box.Text = "1000";
+            fuel1_dropdown.Items.AddRange(get_fuel_list());
+            fuel1_dropdown.SelectedIndex = 0;
+            populate_text_boxes(get_fuel_properties(fuel1_dropdown.SelectedItem.ToString()), 1);
+            fuel2_dropdown.Items.AddRange(get_fuel_list());
+            fuel2_dropdown.SelectedIndex = 1;
+            populate_text_boxes(get_fuel_properties(fuel2_dropdown.SelectedItem.ToString()), 2);
+        }
+
+        public Molecule get_fuel_properties(string fuel_name)
+        {
+            Molecule fuel = new Molecule();
+            StreamReader reader = new StreamReader(System.Environment.CurrentDirectory + @"\..\..\Fuel Library.txt");
+            string line = string.Empty;
+            string property = string.Empty;
+            while ((line = reader.ReadLine()) != fuel_name)
+                continue;
+            line = reader.ReadLine();
+            bool C = false; bool H = false; bool O = false;
+            string word = string.Empty;
+            foreach (char c in line)
+            {
+                if (c == 'C')
+                {
+                    C = true;
+                    if (H)
+                    {
+                        if (word == string.Empty)
+                            fuel.hydrogen = 1;
+                        else
+                            fuel.hydrogen = Convert.ToInt32(word);
+                        H = false;
+                    }
+                    if (O)
+                    {
+                        if (word == string.Empty)
+                            fuel.oxygen = 1;
+                        else
+                            fuel.oxygen = Convert.ToInt32(word);
+                        O = false;
+                    }
+                    word = string.Empty;
+                }
+                else if (c == 'H')
+                {
+                    H = true;
+                    if (C)
+                    {
+                        if (word == string.Empty)
+                            fuel.carbon = 1;
+                        else
+                            fuel.carbon = Convert.ToInt32(word);
+                        C = false;
+                    }
+                    if (O)
+                    {
+                        if (word == string.Empty)
+                            fuel.oxygen = 1;
+                        else
+                            fuel.oxygen = Convert.ToInt32(word);
+                        O = false;
+                    }
+                    word = string.Empty;
+                }
+                else if (c == 'O')
+                {
+                    O = true;
+                    if (C)
+                    {
+                        if (word == string.Empty)
+                            fuel.carbon = 1;
+                        else
+                            fuel.carbon = Convert.ToInt32(word);
+                        C = false;
+                    }
+                    if (H)
+                    {
+                        if (word == string.Empty)
+                            fuel.hydrogen = 1;
+                        else
+                            fuel.hydrogen = Convert.ToInt32(word);
+                        H = false;
+                    }
+                    word = string.Empty;
+                }
+                else
+                    word += c;
+            }
+            if (C)
+            {
+                if (word == string.Empty)
+                    fuel.carbon = 1;
+                else
+                    fuel.carbon = Convert.ToInt32(word);
+                C = false;
+            }
+            if (H)
+            {
+                if (word == string.Empty)
+                    fuel.hydrogen = 1;
+                else
+                    fuel.hydrogen = Convert.ToInt32(word);
+                H = false;
+            }
+            if (O)
+            {
+                if (word == string.Empty)
+                    fuel.oxygen = 1;
+                else
+                    fuel.oxygen = Convert.ToInt32(word);
+                O = false;
+            }
+            while ((line = reader.ReadLine()) != string.Empty && line != null)
+            {
+                word = string.Empty;
+                foreach (char c in line)
+                {
+                    if (c == '=')
+                    {
+                        word.Trim();
+                        property = word;
+                        word = string.Empty;
+                    }
+                    else
+                    {
+                        word += c;
+                    }
+                }
+                word.Trim();
+                if (property.Contains("nthalpy"))
+                    fuel.enthalpy = Convert.ToDouble(word);
+                if (property.Contains("ntropy"))
+                    fuel.entropy = Convert.ToDouble(word);
+                if (property.Contains("ensity"))
+                    fuel.density = Convert.ToDouble(word);
+            }
+            word.Trim();
+            if (property.Contains("nthalpy"))
+                fuel.enthalpy = Convert.ToDouble(word);
+            if (property.Contains("ntropy"))
+                fuel.entropy = Convert.ToDouble(word);
+            if (property.Contains("ensity"))
+                fuel.density = Convert.ToDouble(word);
+            return fuel;
+        }
+
+        public void populate_text_boxes(Molecule fuel, int fuel_number)
+        {
+            if (fuel_number == 1)
+            {
+                carbon_text_box.Text = fuel.carbon.ToString();
+                hydrogen_text_box.Text = fuel.hydrogen.ToString();
+                oxygen_text_box.Text = fuel.oxygen.ToString();
+                enthalpy_text_box.Text = fuel.enthalpy.ToString();
+                entropy_text_box.Text = fuel.entropy.ToString();
+                density_text_box.Text = fuel.density.ToString();
+            }
+            if (fuel_number == 2)
+            {
+                carbon2_text_box.Text = fuel.carbon.ToString();
+                hydrogen2_text_box.Text = fuel.hydrogen.ToString();
+                oxygen2_text_box.Text = fuel.oxygen.ToString();
+                enthalpy2_text_box.Text = fuel.enthalpy.ToString();
+                entropy2_text_box.Text = fuel.entropy.ToString();
+                density2_text_box.Text = fuel.density.ToString();
+            }
+        }
+
+        private void fuel1_dropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            populate_text_boxes(get_fuel_properties(fuel1_dropdown.SelectedItem.ToString()), 1);
+        }
+
+        private void fuel2_dropdown_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            populate_text_boxes(get_fuel_properties(fuel2_dropdown.SelectedItem.ToString()), 2);
         }
 
         private void solve_button_Click(object sender, EventArgs e)
@@ -154,7 +356,7 @@ namespace Fuel_Comparison
                 carbon = Convert.ToInt32(carbon_text_box.Text),
                 hydrogen = Convert.ToInt32(hydrogen_text_box.Text),
                 oxygen = Convert.ToInt32(oxygen_text_box.Text),
-                enthalpy = Convert.ToDouble(enthaply_text_box.Text),
+                enthalpy = Convert.ToDouble(enthalpy_text_box.Text),
                 entropy = Convert.ToDouble(entropy_text_box.Text)
             };
             Molecule fuel2 = new Molecule
@@ -173,22 +375,14 @@ namespace Fuel_Comparison
             Reaction rich_reaction2 = rich_combustion(fuel2);
             #endregion
             #region display each reaction
-            lean_reaction1_text_box.Text = lean_reaction1.fuel_in.ToString() + "C" + fuel1.carbon.ToString() + 
-                "H" + fuel1.hydrogen.ToString() + "O" + fuel1.oxygen.ToString() + " + " + 
-                lean_reaction1.O2_in.ToString() + "O2 -> " + lean_reaction1.H2O_out.ToString() + "H2O + " + 
-                lean_reaction1.CO2_out.ToString() + "CO2";
-            lean_reaction2_text_box.Text = lean_reaction2.fuel_in.ToString() + "C" + fuel2.carbon.ToString() + 
-                "H" + fuel2.hydrogen.ToString() + "O" + fuel2.oxygen.ToString() + " + " + 
-                lean_reaction2.O2_in.ToString() + "O2 -> " + lean_reaction2.H2O_out.ToString() + "H2O + " + 
-                lean_reaction2.CO2_out.ToString() + "CO2";
-            rich_reaction1_text_box.Text = rich_reaction1.fuel_in.ToString() + "C" + fuel1.carbon.ToString() + 
-                "H" + fuel1.hydrogen.ToString() + "O" + fuel1.oxygen.ToString() + " + " + 
-                rich_reaction1.O2_in.ToString() + "O2 -> " + rich_reaction1.H2O_out.ToString() + "H2O + " + 
-                rich_reaction1.CO_out.ToString() + "CO";
-            rich_reaction2_text_box.Text = rich_reaction2.fuel_in.ToString() + "C" + fuel2.carbon.ToString() + 
-                "H" + fuel2.hydrogen.ToString() + "O" + fuel2.oxygen.ToString() + " + " + 
-                rich_reaction2.O2_in.ToString() + "O2 -> " + rich_reaction2.H2O_out.ToString() + "H2O + " + 
-                rich_reaction2.CO_out.ToString() + "CO";
+            lean_reaction1_text_box.Text = lean_reaction1.fuel_in.ToString() + fuel1.chemical_formula() + " + " + lean_reaction1.O2_in.ToString() + "O2 -> " + 
+                lean_reaction1.H2O_out.ToString() + "H2O + " + lean_reaction1.CO2_out.ToString() + "CO2";
+            lean_reaction2_text_box.Text = lean_reaction2.fuel_in.ToString() + fuel2.chemical_formula() + " + " + lean_reaction2.O2_in.ToString() + "O2 -> " + 
+                lean_reaction2.H2O_out.ToString() + "H2O + " + lean_reaction2.CO2_out.ToString() + "CO2";
+            rich_reaction1_text_box.Text = rich_reaction1.fuel_in.ToString() + fuel1.chemical_formula() + " + " + rich_reaction1.O2_in.ToString() + "O2 -> " + 
+                rich_reaction1.H2O_out.ToString() + "H2O + " + rich_reaction1.CO_out.ToString() + "CO";
+            rich_reaction2_text_box.Text = rich_reaction2.fuel_in.ToString() + fuel2.chemical_formula() + " + " + rich_reaction2.O2_in.ToString() + "O2 -> " + 
+                rich_reaction2.H2O_out.ToString() + "H2O + " + rich_reaction2.CO_out.ToString() + "CO";
             #endregion
             #region display air:fuel ratios for each reaction
             lean_AFR_text_box1.Text = lean_reaction1.air_fuel_ratio.ToString("N1") + ":1";
@@ -215,5 +409,6 @@ namespace Fuel_Comparison
             rich_power_ratio.Text = (rich_reaction2.energy_per_O2 / rich_reaction1.energy_per_O2).ToString("N3");
             #endregion
         }
+        
     }
 }

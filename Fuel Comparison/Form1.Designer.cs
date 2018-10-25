@@ -32,7 +32,7 @@
             this.carbon_text_box = new System.Windows.Forms.TextBox();
             this.hydrogen_text_box = new System.Windows.Forms.TextBox();
             this.oxygen_text_box = new System.Windows.Forms.TextBox();
-            this.enthaply_text_box = new System.Windows.Forms.TextBox();
+            this.enthalpy_text_box = new System.Windows.Forms.TextBox();
             this.entropy_text_box = new System.Windows.Forms.TextBox();
             this.lean_reaction1_text_box = new System.Windows.Forms.Label();
             this.density_text_box = new System.Windows.Forms.TextBox();
@@ -41,7 +41,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
@@ -54,7 +53,6 @@
             this.label15 = new System.Windows.Forms.Label();
             this.label17 = new System.Windows.Forms.Label();
             this.label19 = new System.Windows.Forms.Label();
-            this.label20 = new System.Windows.Forms.Label();
             this.label21 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.label23 = new System.Windows.Forms.Label();
@@ -89,6 +87,8 @@
             this.exhaust_text_box = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
+            this.fuel1_dropdown = new System.Windows.Forms.ComboBox();
+            this.fuel2_dropdown = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // solve_button
@@ -122,12 +122,12 @@
             this.oxygen_text_box.Size = new System.Drawing.Size(24, 20);
             this.oxygen_text_box.TabIndex = 3;
             // 
-            // enthaply_text_box
+            // enthalpy_text_box
             // 
-            this.enthaply_text_box.Location = new System.Drawing.Point(58, 101);
-            this.enthaply_text_box.Name = "enthaply_text_box";
-            this.enthaply_text_box.Size = new System.Drawing.Size(49, 20);
-            this.enthaply_text_box.TabIndex = 4;
+            this.enthalpy_text_box.Location = new System.Drawing.Point(58, 101);
+            this.enthalpy_text_box.Name = "enthalpy_text_box";
+            this.enthalpy_text_box.Size = new System.Drawing.Size(49, 20);
+            this.enthalpy_text_box.TabIndex = 4;
             // 
             // entropy_text_box
             // 
@@ -196,15 +196,6 @@
             this.label5.Size = new System.Drawing.Size(15, 13);
             this.label5.TabIndex = 12;
             this.label5.Text = "O";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(12, 19);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(36, 13);
-            this.label6.TabIndex = 13;
-            this.label6.Text = "Fuel 1";
             // 
             // label7
             // 
@@ -313,15 +304,6 @@
             this.label19.Size = new System.Drawing.Size(39, 13);
             this.label19.TabIndex = 34;
             this.label19.Text = "kJ/mol";
-            // 
-            // label20
-            // 
-            this.label20.AutoSize = true;
-            this.label20.Location = new System.Drawing.Point(219, 19);
-            this.label20.Name = "label20";
-            this.label20.Size = new System.Drawing.Size(36, 13);
-            this.label20.TabIndex = 33;
-            this.label20.Text = "Fuel 2";
             // 
             // label21
             // 
@@ -613,11 +595,31 @@
             this.label16.TabIndex = 64;
             this.label16.Text = "K";
             // 
+            // fuel1_dropdown
+            // 
+            this.fuel1_dropdown.FormattingEnabled = true;
+            this.fuel1_dropdown.Location = new System.Drawing.Point(16, 12);
+            this.fuel1_dropdown.Name = "fuel1_dropdown";
+            this.fuel1_dropdown.Size = new System.Drawing.Size(143, 21);
+            this.fuel1_dropdown.TabIndex = 65;
+            this.fuel1_dropdown.SelectedIndexChanged += new System.EventHandler(this.fuel1_dropdown_SelectedIndexChanged);
+            // 
+            // fuel2_dropdown
+            // 
+            this.fuel2_dropdown.FormattingEnabled = true;
+            this.fuel2_dropdown.Location = new System.Drawing.Point(223, 12);
+            this.fuel2_dropdown.Name = "fuel2_dropdown";
+            this.fuel2_dropdown.Size = new System.Drawing.Size(143, 21);
+            this.fuel2_dropdown.TabIndex = 66;
+            this.fuel2_dropdown.SelectedIndexChanged += new System.EventHandler(this.fuel2_dropdown_SelectedIndexChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 501);
+            this.Controls.Add(this.fuel2_dropdown);
+            this.Controls.Add(this.fuel1_dropdown);
             this.Controls.Add(this.label16);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.exhaust_text_box);
@@ -646,7 +648,6 @@
             this.Controls.Add(this.label15);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.label19);
-            this.Controls.Add(this.label20);
             this.Controls.Add(this.label21);
             this.Controls.Add(this.label22);
             this.Controls.Add(this.label23);
@@ -665,7 +666,6 @@
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
@@ -674,7 +674,7 @@
             this.Controls.Add(this.density_text_box);
             this.Controls.Add(this.lean_reaction1_text_box);
             this.Controls.Add(this.entropy_text_box);
-            this.Controls.Add(this.enthaply_text_box);
+            this.Controls.Add(this.enthalpy_text_box);
             this.Controls.Add(this.oxygen_text_box);
             this.Controls.Add(this.hydrogen_text_box);
             this.Controls.Add(this.carbon_text_box);
@@ -692,7 +692,7 @@
         private System.Windows.Forms.TextBox carbon_text_box;
         private System.Windows.Forms.TextBox hydrogen_text_box;
         private System.Windows.Forms.TextBox oxygen_text_box;
-        private System.Windows.Forms.TextBox enthaply_text_box;
+        private System.Windows.Forms.TextBox enthalpy_text_box;
         private System.Windows.Forms.TextBox entropy_text_box;
         private System.Windows.Forms.Label lean_reaction1_text_box;
         private System.Windows.Forms.TextBox density_text_box;
@@ -701,7 +701,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
@@ -714,7 +713,6 @@
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.Label label19;
-        private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label label23;
@@ -749,6 +747,8 @@
         private System.Windows.Forms.TextBox exhaust_text_box;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.ComboBox fuel1_dropdown;
+        private System.Windows.Forms.ComboBox fuel2_dropdown;
     }
 }
 
