@@ -77,8 +77,8 @@ namespace Fuel_Comparison
             double entropy_in = reaction.fuel_in * fuel.entropy + reaction.O2_in * O2.entropy;
             double entropy_out = reaction.H2O_out * H2O.entropy + reaction.CO2_out * CO2.entropy + reaction.CO_out * 
                 CO.entropy;
-            double energy = -enthalpy_change + entropy_out * exhaust_temperature + entropy_in * intake_temperature - 
-                2.0 * entropy_out * intake_temperature;
+            double energy = -enthalpy_change + (entropy_out * exhaust_temperature + entropy_in * 
+                intake_temperature - 2.0 * entropy_out * intake_temperature) / 1000.0;
             reaction.energy_per_fuel = (energy / reaction.fuel_in) * (Convert.ToDouble(density_text_box.Text) / 
                 fuel.molar_mass());
             reaction.energy_per_O2 = energy / reaction.O2_in;
@@ -111,8 +111,8 @@ namespace Fuel_Comparison
             double entropy_in = reaction.fuel_in * fuel.entropy + reaction.O2_in * O2.entropy;
             double entropy_out = reaction.H2O_out * H2O.entropy + reaction.CO2_out * CO2.entropy + reaction.CO_out * 
                 CO.entropy;
-            double energy = -enthalpy_change + entropy_out * exhaust_temperature + entropy_in * intake_temperature - 
-                2.0 * entropy_out * intake_temperature;
+            double energy = -enthalpy_change + (entropy_out * exhaust_temperature + entropy_in * 
+                intake_temperature - 2.0 * entropy_out * intake_temperature) / 1000.0;
             reaction.energy_per_fuel = (energy / reaction.fuel_in) * (Convert.ToDouble(density_text_box.Text) / 
                 fuel.molar_mass());
             reaction.energy_per_O2 = energy / reaction.O2_in;
